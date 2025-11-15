@@ -33,6 +33,11 @@ Although designed for the cloud, the entire pipeline runs **locally** using Snow
 
 ```mermaid
 flowchart TD
+
+    %% -------------------------
+    %% Main ELT Data Flow
+    %% -------------------------
+
     A[Python Synthetic Data Generator] --> B[Local Raw Data Zone]
     B --> C[Snowflake RAW Layer]
 
@@ -45,13 +50,31 @@ flowchart TD
 
     H --> I[BI Dashboards / Analytics / ML Models]
 
+
+    %% -------------------------
+    %% Orchestration Layer
+    %% -------------------------
     subgraph Orchestration
         J[Airflow DAG]
     end
+
     J --> A
     J --> C
     J --> D
     J --> G
+
+
+    %% -------------------------
+    %% Terraform Enhancement
+    %% -------------------------
+    subgraph Infra_as_Code
+        K[Terraform<br/>(Snowflake IaC)]
+    end
+
+    K --> C
+    K --> D
+    K --> E
+    K --> F
 
 ```
 ## 🚀 Key Features
