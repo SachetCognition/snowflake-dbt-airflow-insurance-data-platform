@@ -53,6 +53,7 @@ flowchart TD
     J --> D
     J --> G
 
+```
 ## 🚀 Key Features
 
 ### 🔹 End-to-End ELT Pipeline
