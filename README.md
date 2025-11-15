@@ -104,6 +104,7 @@ run_feature_engineering      (PythonOperator / PySpark)
 data_quality_summary         (PythonOperator)
 
 ## Repository Structure
+```markdown
 snowflake-dbt-airflow-insurance-data-platform/
 │
 ├── airflow/
@@ -163,7 +164,7 @@ snowflake-dbt-airflow-insurance-data-platform/
 ├── requirements.txt
 ├── .env.example
 └── README.md
-
+```
 ## 📊 Outputs
 
 - Modeled Snowflake warehouse tables
