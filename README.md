@@ -28,7 +28,6 @@ This project builds a **modern, cloud-native ELT data platform** that simulates 
 Although designed for the cloud, the entire pipeline runs **locally** using Snowflake, dbt, Airflow, Python, and Terraform.
 
 ---
-
 ## 🏗️ Architecture Diagram
 
 ```mermaid
@@ -65,10 +64,10 @@ flowchart TD
 
 
     %% -------------------------
-    %% Terraform Enhancement
+    %% Terraform / IaC Layer
     %% -------------------------
     subgraph Infra_as_Code
-        K[Terraform<br/>(Snowflake IaC)]
+        K[Terraform (Snowflake IaC)]
     end
 
     K --> C
@@ -76,8 +75,7 @@ flowchart TD
     K --> E
     K --> F
 
-```
-
+--- 
 
 ## 🚀 Key Features
 
