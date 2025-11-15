@@ -107,11 +107,6 @@ claim_id, policy_id, incident_date, report_date,
 paid_amount, reserved_amount, fault_flag, cause,
 settlement_status
 
-markdown
-Copy code
-
----
-
 ## 🧩 dbt Models
 
 ### **STAGING Layer**
@@ -142,50 +137,72 @@ run_feature_engineering (PythonOperator / PySpark)
 
 data_quality_summary (PythonOperator)
 
-yaml
-Copy code
 
----
 
 ## 📁 Repository Structure
 
-insurance-risk-lossratio-data-platform/
+snowflake-dbt-airflow-insurance-data-platform/
 │
 ├── airflow/
-│ └── dags/
-│ └── insurance_pipeline_dag.py
+│ ├── dags/
+│ │ └── insurance_elt_pipeline.py
+│ └── docker-compose.yml (if running Airflow with Docker)
 │
 ├── dbt/
 │ ├── models/
 │ │ ├── staging/
+│ │ │ ├── stg_quotes.sql
+│ │ │ ├── stg_policies.sql
+│ │ │ └── stg_claims.sql
 │ │ ├── core/
+│ │ │ ├── core_policy_snapshot.sql
+│ │ │ └── core_policy_claims.sql
 │ │ └── marts/
+│ │ ├── mart_loss_ratio_by_segment.sql
+│ │ ├── mart_customer_risk.sql
+│ │ └── mart_product_performance.sql
+│ │
 │ ├── seeds/
+│ ├── snapshots/
 │ ├── tests/
+│ ├── macros/
 │ └── dbt_project.yml
 │
 ├── python/
 │ ├── generate_data.py
 │ ├── feature_engineering.py
-│ └── utils/
+│ ├── utils/
+│ │ ├── snowflake_client.py
+│ │ └── transformations.py
+│ └── notebooks/
+│ └── eda.ipynb
 │
 ├── infra/
 │ ├── main.tf
 │ ├── variables.tf
+│ ├── outputs.tf
 │ └── snowflake/
+│ ├── warehouse.tf
+│ ├── database.tf
+│ ├── roles_users.tf
+│ └── stages.tf
 │
 ├── data/
-│ └── raw/
+│ ├── raw/
+│ │ ├── quotes/
+│ │ ├── policies/
+│ │ └── claims/
+│ └── sample/
 │
-├── .github/workflows/
+├── .github/
+│ └── workflows/
 │ └── ci.yml
 │
+├── requirements.txt
+├── .env.example
 └── README.md
 
-yaml
-Copy code
-
----
+--- 
 
 ## ▶️ How to Run the Project Locally
 
