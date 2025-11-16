@@ -1,2 +1,2 @@
-claim_id,policy_id,claim_amount
-1000,10,2000.0
+claim_id,claim_number,policy_id,customer_id,loss_date,report_date,settlement_date,claim_status,claim_cause,coverage_type,incurred_amount,paid_amount,reserve_amount
+1,C-000001,6,1523,2025-04-23,2025-05-18,2025-06-28,CLOSED,Weather,Comprehensive,8175.3,5131.69,3043.61

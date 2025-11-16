@@ -1,2 +1,2 @@
-policy_id,customer_id,product
-10,100,Motor
+policy_id,policy_number,quote_id,customer_id,product,inception_date,expiry_date,premium_written,payment_frequency,policy_status
+1,P-000001,1,179,Motor,2022-08-13,2023-08-13,432.99,MONTHLY,CANCELLED

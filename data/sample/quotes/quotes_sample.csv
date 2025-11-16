@@ -1,2 +1,2 @@
-quote_id,customer_id,premium
-1,100,500.0
+quote_id,quote_number,customer_id,quote_date,product,channel,risk_score,premium_quoted,quote_status
+1,Q-000001,179,2022-08-05,Motor,Agent,0.441,451.69,BOUND
