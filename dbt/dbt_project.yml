@@ -1,0 +1,21 @@
+name: "insurance_dbt"
+version: "1.0.0"
+config-version: 2
+
+profile: "insurance_snowflake"
+
+model-paths: ["models"]
+seed-paths: ["seeds"]
+test-paths: ["tests"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+
+models:
+  insurance_dbt:
+    +materialized: view
+    staging:
+      +schema: staging
+    core:
+      +schema: core
+    marts:
+      +schema: marts

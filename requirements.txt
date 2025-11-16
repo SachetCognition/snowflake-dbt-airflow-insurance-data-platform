@@ -1,0 +1,19 @@
+# Core
+pandas
+numpy
+
+# Snowflake
+snowflake-connector-python
+snowflake-sqlalchemy
+
+# dbt (Snowflake)
+dbt-core
+dbt-snowflake
+
+# Airflow (pinned version is usually safer, we’ll refine later)
+apache-airflow
+
+# PySpark (for feature engineering)
+pyspark
+
+# Terraform is installed separately (not a Python package)
