@@ -1,0 +1,25 @@
+# Ignore generated raw data
+data/raw/
+
+# Allow empty folders with .gitkeep
+!data/raw/.gitkeep
+!data/raw/quotes/.gitkeep
+!data/raw/policies/.gitkeep
+!data/raw/claims/.gitkeep
+
+# Ignore large samples if any
+data/sample/*.csv
+
+# Ignore Python cache
+__pycache__/
+*.pyc
+
+# Ignore environment variables file
+.env
+
+# Ignore Airflow metadata & logs
+airflow/logs/
+airflow/airflow.db
+
+# Notebook checkpoint junk
+*/.ipynb_checkpoints/
