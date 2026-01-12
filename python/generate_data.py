@@ -14,6 +14,10 @@ N_QUOTES = 5000  # total quotes
 CONVERSION_RATE = 0.4  # 40% of quotes become policies
 MAX_CLAIMS_PER_POLICY = 3
 
+# Fraud configuration
+FRAUD_RATE = 0.05  # 5% of claims are fraudulent
+FRAUD_CUSTOMER_RATE = 0.02  # 2% of customers are "fraud-prone"
+
 RNG_SEED = 42
 
 
@@ -122,7 +126,30 @@ def generate_policies(df_quotes, rng):
     return df_policies
 
 
-def generate_claims(df_policies, rng):
+def generate_fraud_prone_customers(rng):
+    """Generate a set of customer IDs that are fraud-prone."""
+    n_fraud_customers = int(N_CUSTOMERS * FRAUD_CUSTOMER_RATE)
+    fraud_customer_ids = set(rng.choice(
+        np.arange(1, N_CUSTOMERS + 1), 
+        size=n_fraud_customers, 
+        replace=False
+    ))
+    return fraud_customer_ids
+
+
+def generate_claims(df_policies, rng, fraud_customer_ids=None):
+    """Generate claims with fraud indicators.
+    
+    Fraud patterns implemented:
+    1. Velocity fraud: Multiple claims in short time periods
+    2. Amount fraud: Unusually high claim amounts
+    3. Timing fraud: Claims shortly after policy inception
+    4. Pattern fraud: Same claim cause repeatedly
+    5. Quick reporting fraud: Same-day loss and report dates
+    """
+    if fraud_customer_ids is None:
+        fraud_customer_ids = set()
+    
     claims_rows = []
 
     claim_causes = ["Collision", "Theft", "Fire", "Weather", "Other"]
@@ -134,35 +161,83 @@ def generate_claims(df_policies, rng):
         inception_date = row["inception_date"]
         expiry_date = row["expiry_date"]
         product = row["product"]
+        
+        is_fraud_customer = customer_id in fraud_customer_ids
 
-        # Decide how many claims for this policy
-        n_claims = rng.choice(
-            np.arange(0, MAX_CLAIMS_PER_POLICY + 1),
-            p=[0.6, 0.25, 0.1, 0.05]  # 60% have no claims, etc.
-        )
+        # Fraud-prone customers have more claims
+        if is_fraud_customer:
+            n_claims = rng.choice(
+                np.arange(1, MAX_CLAIMS_PER_POLICY + 2),  # 1-4 claims
+                p=[0.3, 0.3, 0.25, 0.15]
+            )
+        else:
+            n_claims = rng.choice(
+                np.arange(0, MAX_CLAIMS_PER_POLICY + 1),
+                p=[0.6, 0.25, 0.1, 0.05]  # 60% have no claims, etc.
+            )
 
         if n_claims == 0:
             continue
 
-        loss_dates = random_dates(inception_date, expiry_date, n_claims, rng)
+        # For fraud customers, cluster claims in short time periods (velocity fraud)
+        if is_fraud_customer and n_claims > 1:
+            # Claims within 60 days of each other
+            first_loss = inception_date + timedelta(days=int(rng.integers(0, 60)))
+            loss_dates = [first_loss + timedelta(days=int(rng.integers(0, 45))) for _ in range(n_claims)]
+        else:
+            loss_dates = random_dates(inception_date, expiry_date, n_claims, rng)
+        
+        # Fraud customers tend to use same claim cause (pattern fraud)
+        preferred_cause = rng.choice(claim_causes) if is_fraud_customer else None
 
         for i in range(n_claims):
             loss_date = loss_dates[i]
-            # report within 0–30 days
-            report_date = loss_date + timedelta(days=int(rng.integers(0, 31)))
+            
+            # Determine if this specific claim is fraudulent
+            is_fraud = False
+            fraud_indicators = []
+            
+            # Fraud-prone customers have higher chance of fraud
+            if is_fraud_customer:
+                is_fraud = rng.random() < 0.7  # 70% of fraud customer claims are fraudulent
+            else:
+                is_fraud = rng.random() < FRAUD_RATE  # 5% random fraud
+            
+            if is_fraud:
+                # Quick reporting fraud: same day or next day
+                report_date = loss_date + timedelta(days=int(rng.integers(0, 2)))
+                fraud_indicators.append("QUICK_REPORT")
+                
+                # Timing fraud: claim within 30 days of inception
+                if (loss_date - inception_date).days <= 30:
+                    fraud_indicators.append("EARLY_CLAIM")
+            else:
+                # Normal reporting: 0-30 days
+                report_date = loss_date + timedelta(days=int(rng.integers(0, 31)))
 
-            # some claims settle within 0–180 days, some stay open
+            # Settlement logic
             if rng.random() < 0.7:
                 settlement_date = report_date + timedelta(days=int(rng.integers(0, 181)))
                 claim_status = "CLOSED"
             else:
                 settlement_date = None
-                claim_status = rng.choice(["OPEN", "REJECTED"], p=[0.8, 0.2])
+                # Fraudulent claims more likely to be rejected
+                if is_fraud:
+                    claim_status = rng.choice(["OPEN", "REJECTED"], p=[0.5, 0.5])
+                else:
+                    claim_status = rng.choice(["OPEN", "REJECTED"], p=[0.8, 0.2])
 
-            cause = rng.choice(claim_causes)
+            # Cause selection - fraud customers repeat same cause
+            if is_fraud_customer and preferred_cause:
+                cause = preferred_cause if rng.random() < 0.7 else rng.choice(claim_causes)
+                if cause == preferred_cause:
+                    fraud_indicators.append("REPEATED_CAUSE")
+            else:
+                cause = rng.choice(claim_causes)
+            
             coverage = rng.choice(coverage_types)
 
-            # Incurred amount depends on product
+            # Incurred amount - fraudulent claims tend to be higher
             if product == "Motor":
                 base = rng.normal(3000, 1500)
             elif product == "Home":
@@ -170,10 +245,23 @@ def generate_claims(df_policies, rng):
             else:  # Travel
                 base = rng.normal(800, 400)
 
+            # Amount fraud: inflate claim amounts
+            if is_fraud:
+                inflation_factor = rng.uniform(1.5, 3.0)  # 50-200% inflation
+                base = base * inflation_factor
+                fraud_indicators.append("HIGH_AMOUNT")
+
             incurred = max(0, base)
-            # Paid is up to incurred
             paid = incurred * rng.uniform(0.2, 1.0)
             reserve = max(0, incurred - paid)
+            
+            # Calculate fraud score (0-100)
+            fraud_score = 0
+            if is_fraud:
+                fraud_score = min(100, len(fraud_indicators) * 25 + rng.integers(10, 30))
+            else:
+                # Some legitimate claims may have suspicious patterns
+                fraud_score = rng.integers(0, 20)
 
             claims_rows.append({
                 "policy_id": policy_id,
@@ -187,14 +275,17 @@ def generate_claims(df_policies, rng):
                 "incurred_amount": round(incurred, 2),
                 "paid_amount": round(paid, 2),
                 "reserve_amount": round(reserve, 2),
+                "is_fraud": is_fraud,
+                "fraud_score": fraud_score,
+                "fraud_indicators": "|".join(fraud_indicators) if fraud_indicators else None,
             })
 
     if not claims_rows:
         return pd.DataFrame(columns=[
             "claim_id",
+            "claim_number",
             "policy_id",
             "customer_id",
-            "claim_number",
             "loss_date",
             "report_date",
             "settlement_date",
@@ -204,6 +295,9 @@ def generate_claims(df_policies, rng):
             "incurred_amount",
             "paid_amount",
             "reserve_amount",
+            "is_fraud",
+            "fraud_score",
+            "fraud_indicators",
         ])
 
     df_claims = pd.DataFrame(claims_rows)
@@ -225,9 +319,18 @@ def main():
     df_policies = generate_policies(df_quotes, rng)
     print(f"Policies generated: {len(df_policies)}")
 
-    print("Generating claims for policies...")
-    df_claims = generate_claims(df_policies, rng)
+    print("Generating fraud-prone customer profiles...")
+    fraud_customer_ids = generate_fraud_prone_customers(rng)
+    print(f"Fraud-prone customers: {len(fraud_customer_ids)}")
+
+    print("Generating claims for policies (with fraud patterns)...")
+    df_claims = generate_claims(df_policies, rng, fraud_customer_ids)
     print(f"Claims generated: {len(df_claims)}")
+    
+    # Print fraud statistics
+    fraud_count = df_claims["is_fraud"].sum()
+    fraud_rate = fraud_count / len(df_claims) * 100 if len(df_claims) > 0 else 0
+    print(f"Fraudulent claims: {fraud_count} ({fraud_rate:.1f}%)")
 
     # Save CSVs
     quotes_path = os.path.join(RAW_DATA_DIR, "quotes", "quotes.csv")
@@ -241,7 +344,7 @@ def main():
     print(f"Saved quotes to   {quotes_path}")
     print(f"Saved policies to {policies_path}")
     print(f"Saved claims to   {claims_path}")
-    print("Done ✅")
+    print("Done!")
 
 
 if __name__ == "__main__":
