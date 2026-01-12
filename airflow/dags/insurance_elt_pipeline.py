@@ -196,4 +196,4 @@ print('Data loading complete!')
     )
     
     # Define task dependencies
-    start >> generate_data >> load_to_snowflake >> run_dbt >> fraud_detection_group >> quality_check >> endc.
+    start >> generate_data >> load_to_snowflake >> run_dbt >> fraud_detection_group >> quality_check >> end
