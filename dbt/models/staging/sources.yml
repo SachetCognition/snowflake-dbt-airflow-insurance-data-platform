@@ -1,0 +1,88 @@
+version: 2
+
+sources:
+  - name: raw
+    database: INSURANCE_DB
+    schema: RAW
+    tables:
+      - name: quotes
+        description: Raw quotes data from synthetic data generation
+        columns:
+          - name: quote_id
+            description: Unique identifier for the quote
+          - name: quote_number
+            description: Human-readable quote reference number
+          - name: customer_id
+            description: Foreign key to customer
+          - name: quote_date
+            description: Date the quote was created
+          - name: product
+            description: Insurance product type (Motor, Home, Travel)
+          - name: channel
+            description: Sales channel (Online, Agent, Broker)
+          - name: risk_score
+            description: Risk assessment score (0-1)
+          - name: premium_quoted
+            description: Premium amount quoted
+          - name: quote_status
+            description: Status of quote (BOUND, DECLINED, EXPIRED)
+
+      - name: policies
+        description: Raw policies data from bound quotes
+        columns:
+          - name: policy_id
+            description: Unique identifier for the policy
+          - name: policy_number
+            description: Human-readable policy reference number
+          - name: quote_id
+            description: Foreign key to the originating quote
+          - name: customer_id
+            description: Foreign key to customer
+          - name: product
+            description: Insurance product type
+          - name: inception_date
+            description: Policy start date
+          - name: expiry_date
+            description: Policy end date
+          - name: premium_written
+            description: Final premium amount written
+          - name: payment_frequency
+            description: Payment schedule (ANNUAL, MONTHLY)
+          - name: policy_status
+            description: Current policy status (ACTIVE, LAPSED, CANCELLED)
+
+      - name: claims
+        description: Raw claims data for policies with fraud indicators
+        columns:
+          - name: claim_id
+            description: Unique identifier for the claim
+          - name: claim_number
+            description: Human-readable claim reference number
+          - name: policy_id
+            description: Foreign key to the policy
+          - name: customer_id
+            description: Foreign key to customer
+          - name: loss_date
+            description: Date of the loss event
+          - name: report_date
+            description: Date the claim was reported
+          - name: settlement_date
+            description: Date the claim was settled (null if open)
+          - name: claim_status
+            description: Current claim status (OPEN, CLOSED, REJECTED)
+          - name: claim_cause
+            description: Cause of the claim (Collision, Theft, Fire, Weather, Other)
+          - name: coverage_type
+            description: Type of coverage (Third Party, Comprehensive)
+          - name: incurred_amount
+            description: Total incurred amount (paid + reserve)
+          - name: paid_amount
+            description: Amount already paid
+          - name: reserve_amount
+            description: Amount held in reserve
+          - name: is_fraud
+            description: Boolean flag indicating if claim is fraudulent (ground truth)
+          - name: fraud_score
+            description: Fraud risk score (0-100) from data generation
+          - name: fraud_indicators
+            description: Pipe-separated list of fraud indicators (QUICK_REPORT, EARLY_CLAIM, HIGH_AMOUNT, REPEATED_CAUSE)
