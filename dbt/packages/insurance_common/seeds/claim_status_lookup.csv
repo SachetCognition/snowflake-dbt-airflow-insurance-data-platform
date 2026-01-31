@@ -1,0 +1,12 @@
+claim_status_code,claim_status_name,claim_status_category,is_open,is_closed,is_denied,sort_order
+OPEN,Open,Active,true,false,false,1
+PENDING,Pending,Active,true,false,false,2
+UNDER_REVIEW,Under Review,Active,true,false,false,3
+CLOSED,Closed,Resolved,false,true,false,4
+SETTLED,Settled,Resolved,false,true,false,5
+REJECTED,Rejected,Resolved,false,false,true,6
+DENIED,Denied,Resolved,false,false,true,7
+REOPENED,Reopened,Active,true,false,false,8
+SUBROGATION,Subrogation,Active,true,false,false,9
+LITIGATION,Litigation,Active,true,false,false,10
+UNKNOWN,Unknown,Unknown,false,false,false,99

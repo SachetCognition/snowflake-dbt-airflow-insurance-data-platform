@@ -1,0 +1,10 @@
+coverage_type_code,coverage_type_name,coverage_category,is_comprehensive,is_third_party,sort_order
+THIRD_PARTY,Third Party,Liability,false,true,1
+COMPREHENSIVE,Comprehensive,Full,true,false,2
+TPFT,Third Party Fire and Theft,Partial,false,true,3
+COLLISION,Collision,Partial,false,false,4
+PERSONAL_INJURY,Personal Injury,Liability,false,true,5
+PROPERTY_DAMAGE,Property Damage,Liability,false,true,6
+MEDICAL,Medical Payments,Medical,false,false,7
+UNINSURED,Uninsured Motorist,Protection,false,false,8
+UNKNOWN,Unknown,Unknown,false,false,99
