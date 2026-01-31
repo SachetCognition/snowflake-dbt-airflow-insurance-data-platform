@@ -1,0 +1,13 @@
+claim_cause_code,claim_cause_name,claim_cause_category,typical_severity,sort_order
+COLLISION,Collision,Accident,MEDIUM,1
+ACCIDENT,Accident,Accident,MEDIUM,2
+THEFT,Theft,Crime,HIGH,3
+FIRE,Fire,Disaster,HIGH,4
+WEATHER,Weather,Natural,MEDIUM,5
+FLOOD,Flood,Natural,HIGH,6
+HAIL,Hail,Natural,LOW,7
+VANDALISM,Vandalism,Crime,LOW,8
+GLASS,Glass Damage,Minor,LOW,9
+MEDICAL,Medical,Personal,MEDIUM,10
+OTHER,Other,Miscellaneous,LOW,99
+UNKNOWN,Unknown,Unknown,UNKNOWN,100

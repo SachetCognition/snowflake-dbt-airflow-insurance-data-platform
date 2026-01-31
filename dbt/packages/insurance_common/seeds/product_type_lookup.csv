@@ -1,0 +1,11 @@
+product_type_code,product_type_name,product_category,base_premium,typical_severity,sort_order
+MOTOR,Motor,Vehicle,400,MEDIUM,1
+AUTO,Auto,Vehicle,400,MEDIUM,2
+HOME,Home,Property,300,HIGH,3
+PROPERTY,Property,Property,300,HIGH,4
+TRAVEL,Travel,Personal,150,LOW,5
+HEALTH,Health,Personal,500,MEDIUM,6
+LIFE,Life,Personal,600,HIGH,7
+COMMERCIAL,Commercial,Business,1000,HIGH,8
+LIABILITY,Liability,Business,800,MEDIUM,9
+UNKNOWN,Unknown,Unknown,0,UNKNOWN,99

@@ -1,0 +1,82 @@
+version: 2
+
+sources:
+  - name: raw
+    database: "{{ env_var('SNOWFLAKE_DATABASE', 'INSURANCE_DB') }}"
+    schema: raw
+    tables:
+      - name: raw_quotes
+        description: Raw quotes data loaded from CSV
+        columns:
+          - name: quote_id
+            description: Unique identifier for the quote
+          - name: quote_number
+            description: Human-readable quote number
+          - name: customer_id
+            description: Customer identifier
+          - name: quote_date
+            description: Date the quote was created
+          - name: product
+            description: Insurance product type (Motor, Home, Travel)
+          - name: channel
+            description: Sales channel (Online, Agent, Broker)
+          - name: risk_score
+            description: Risk score between 0 and 1
+          - name: premium_quoted
+            description: Quoted premium amount
+          - name: quote_status
+            description: Quote status (BOUND, DECLINED, EXPIRED)
+
+      - name: raw_policies
+        description: Raw policies data loaded from CSV
+        columns:
+          - name: policy_id
+            description: Unique identifier for the policy
+          - name: policy_number
+            description: Human-readable policy number
+          - name: quote_id
+            description: Reference to the originating quote
+          - name: customer_id
+            description: Customer identifier
+          - name: product
+            description: Insurance product type
+          - name: inception_date
+            description: Policy start date
+          - name: expiry_date
+            description: Policy end date
+          - name: premium_written
+            description: Written premium amount
+          - name: payment_frequency
+            description: Payment frequency (ANNUAL, MONTHLY)
+          - name: policy_status
+            description: Policy status (ACTIVE, LAPSED, CANCELLED)
+
+      - name: raw_claims
+        description: Raw claims data loaded from CSV
+        columns:
+          - name: claim_id
+            description: Unique identifier for the claim
+          - name: claim_number
+            description: Human-readable claim number
+          - name: policy_id
+            description: Reference to the policy
+          - name: customer_id
+            description: Customer identifier
+          - name: loss_date
+            description: Date of loss event
+          - name: report_date
+            description: Date claim was reported
+          - name: settlement_date
+            description: Date claim was settled (null if open)
+          - name: claim_status
+            description: Claim status (OPEN, CLOSED, REJECTED)
+          - name: claim_cause
+            description: Cause of claim (Collision, Theft, Fire, Weather, Other)
+          - name: coverage_type
+            description: Coverage type (Third Party, Comprehensive)
+          - name: incurred_amount
+            description: Total incurred amount (paid + reserve)
+          - name: paid_amount
+            description: Amount paid out
+          - name: reserve_amount
+            description: Amount held in reserve
