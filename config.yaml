@@ -1,0 +1,68 @@
+# Configuration file for Insurance Data Platform
+# This file externalizes hard-coded values from the codebase
+
+data_generation:
+  # Number of unique customers to generate
+  n_customers: 2000
+  
+  # Total number of quotes to generate
+  n_quotes: 5000
+  
+  # Conversion rate from quotes to policies (40% = 0.4)
+  # Only quotes with status 'BOUND' become policies
+  conversion_rate: 0.4
+  
+  # Maximum number of claims per policy
+  max_claims_per_policy: 3
+  
+  # Random seed for reproducibility
+  rng_seed: 42
+  
+  # Date range for quote generation
+  quote_start_date: "2022-01-01"
+  quote_end_date: "2024-12-31"
+
+  # Product distribution probabilities
+  product_distribution:
+    Motor: 0.6
+    Home: 0.25
+    Travel: 0.15
+  
+  # Channel distribution probabilities
+  channel_distribution:
+    Online: 0.5
+    Agent: 0.3
+    Broker: 0.2
+
+  # Claims distribution (probability of 0, 1, 2, 3 claims per policy)
+  claims_distribution: [0.6, 0.25, 0.1, 0.05]
+
+paths:
+  # Base directory is relative to project root
+  raw_data_dir: "data/raw"
+  
+  # Output subdirectories
+  quotes_subdir: "quotes"
+  policies_subdir: "policies"
+  claims_subdir: "claims"
+
+logging:
+  # Log level: DEBUG, INFO, WARNING, ERROR, CRITICAL
+  level: "INFO"
+  
+  # Log file path (relative to project root)
+  file: "logs/insurance_platform.log"
+  
+  # Log format
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+
+snowflake:
+  # Connection retry settings
+  max_retries: 3
+  retry_delay_seconds: 5
+  
+  # Table names in RAW schema
+  raw_tables:
+    quotes: "RAW_QUOTES"
+    policies: "RAW_POLICIES"
+    claims: "RAW_CLAIMS"

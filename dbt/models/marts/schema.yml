@@ -1,0 +1,111 @@
+version: 2
+
+models:
+  - name: mart_loss_ratio_by_segment
+    description: "Loss ratio analytics segmented by product, channel, and risk band"
+    columns:
+      - name: product
+        description: "Insurance product type"
+        tests:
+          - not_null
+      - name: channel
+        description: "Sales channel"
+        tests:
+          - not_null
+      - name: risk_band
+        description: "Risk band classification"
+        tests:
+          - not_null
+      - name: policy_count
+        description: "Number of policies in segment"
+        tests:
+          - not_null
+      - name: total_earned_premium
+        description: "Total earned premium for segment"
+        tests:
+          - not_null
+      - name: total_incurred_claims
+        description: "Total incurred claims for segment"
+        tests:
+          - not_null
+      - name: loss_ratio
+        description: "Loss ratio (incurred claims / earned premium)"
+      - name: profitability_tier
+        description: "Profitability classification"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['HIGHLY_PROFITABLE', 'PROFITABLE', 'MARGINAL', 'UNPROFITABLE', 'UNKNOWN']
+
+  - name: mart_customer_risk
+    description: "Customer-level risk assessment and value metrics"
+    columns:
+      - name: customer_id
+        description: "Primary key - unique customer identifier"
+        tests:
+          - unique
+          - not_null
+      - name: total_policies
+        description: "Total number of policies for customer"
+        tests:
+          - not_null
+      - name: total_premium_written
+        description: "Total premium written across all policies"
+        tests:
+          - not_null
+      - name: total_claims
+        description: "Total number of claims"
+        tests:
+          - not_null
+      - name: risk_band
+        description: "Customer risk band classification"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['LOW', 'MEDIUM', 'HIGH']
+      - name: customer_tier
+        description: "Customer value tier"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['PLATINUM', 'GOLD', 'SILVER', 'BRONZE']
+      - name: retention_status
+        description: "Customer retention status"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['AT_RISK', 'LOYAL', 'ACTIVE', 'INACTIVE']
+
+  - name: mart_product_performance
+    description: "Product performance analytics over time"
+    columns:
+      - name: product
+        description: "Insurance product type"
+        tests:
+          - not_null
+      - name: policy_year
+        description: "Year of policy inception"
+        tests:
+          - not_null
+      - name: policy_quarter
+        description: "Quarter of policy inception"
+        tests:
+          - not_null
+      - name: period_label
+        description: "Human-readable period label (YYYY-QN)"
+        tests:
+          - not_null
+      - name: new_policies
+        description: "Number of new policies in period"
+        tests:
+          - not_null
+      - name: premium_written
+        description: "Premium written in period"
+        tests:
+          - not_null
+      - name: incurred_claims
+        description: "Incurred claims in period"
+        tests:
+          - not_null
+      - name: loss_ratio
+        description: "Loss ratio for period"

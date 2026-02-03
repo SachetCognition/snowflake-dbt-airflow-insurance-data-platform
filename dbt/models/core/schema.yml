@@ -1,0 +1,69 @@
+version: 2
+
+models:
+  - name: core_policy_claims
+    description: "Unified fact table joining policies with their associated claims for loss ratio calculations"
+    columns:
+      - name: policy_id
+        description: "Policy identifier"
+        tests:
+          - not_null
+      - name: quote_id
+        description: "Reference to the originating quote"
+        tests:
+          - not_null
+      - name: customer_id
+        description: "Customer identifier"
+        tests:
+          - not_null
+      - name: product
+        description: "Insurance product type"
+        tests:
+          - not_null
+      - name: premium_written
+        description: "Premium amount written"
+        tests:
+          - not_null
+      - name: earned_premium
+        description: "Earned premium based on time elapsed"
+        tests:
+          - not_null
+
+  - name: core_policy_snapshot
+    description: "Policy-level summary with aggregated claims metrics"
+    columns:
+      - name: policy_id
+        description: "Primary key - unique identifier for the policy"
+        tests:
+          - unique
+          - not_null
+      - name: policy_number
+        description: "Business policy number"
+        tests:
+          - not_null
+      - name: customer_id
+        description: "Customer identifier"
+        tests:
+          - not_null
+      - name: product
+        description: "Insurance product type"
+        tests:
+          - not_null
+      - name: premium_written
+        description: "Premium amount written"
+        tests:
+          - not_null
+      - name: claim_count
+        description: "Number of claims for this policy"
+        tests:
+          - not_null
+      - name: total_incurred
+        description: "Total incurred amount for all claims"
+        tests:
+          - not_null
+      - name: claims_category
+        description: "Claims category classification"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['NO_CLAIMS', 'SINGLE_CLAIM', 'MULTIPLE_CLAIMS']
