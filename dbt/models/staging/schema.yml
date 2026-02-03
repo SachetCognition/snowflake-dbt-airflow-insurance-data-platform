@@ -1,0 +1,153 @@
+version: 2
+
+models:
+  - name: stg_quotes
+    description: "Cleaned and standardized quotes data from raw layer"
+    columns:
+      - name: quote_id
+        description: "Primary key - unique identifier for the quote"
+        tests:
+          - unique
+          - not_null
+      - name: quote_number
+        description: "Business quote number (Q-XXXXXX format)"
+        tests:
+          - not_null
+      - name: customer_id
+        description: "Customer identifier"
+        tests:
+          - not_null
+      - name: quote_date
+        description: "Date the quote was created"
+        tests:
+          - not_null
+      - name: product
+        description: "Insurance product type"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['MOTOR', 'HOME', 'TRAVEL']
+      - name: channel
+        description: "Sales channel"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['ONLINE', 'AGENT', 'BROKER']
+      - name: quote_status
+        description: "Quote status"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['BOUND', 'DECLINED', 'EXPIRED']
+      - name: risk_score
+        description: "Risk score between 0 and 1"
+        tests:
+          - not_null
+      - name: premium_quoted
+        description: "Premium amount quoted"
+        tests:
+          - not_null
+      - name: risk_band
+        description: "Risk band classification"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['LOW', 'MEDIUM', 'HIGH']
+
+  - name: stg_policies
+    description: "Cleaned and standardized policies data from raw layer"
+    columns:
+      - name: policy_id
+        description: "Primary key - unique identifier for the policy"
+        tests:
+          - unique
+          - not_null
+      - name: policy_number
+        description: "Business policy number (P-XXXXXX format)"
+        tests:
+          - not_null
+      - name: quote_id
+        description: "Reference to the originating quote"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_quotes')
+              field: quote_id
+      - name: customer_id
+        description: "Customer identifier"
+        tests:
+          - not_null
+      - name: product
+        description: "Insurance product type"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['MOTOR', 'HOME', 'TRAVEL']
+      - name: inception_date
+        description: "Policy start date"
+        tests:
+          - not_null
+      - name: expiry_date
+        description: "Policy end date"
+        tests:
+          - not_null
+      - name: policy_status
+        description: "Policy status"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['ACTIVE', 'LAPSED', 'CANCELLED']
+      - name: premium_written
+        description: "Premium amount written"
+        tests:
+          - not_null
+
+  - name: stg_claims
+    description: "Cleaned and standardized claims data from raw layer"
+    columns:
+      - name: claim_id
+        description: "Primary key - unique identifier for the claim"
+        tests:
+          - unique
+          - not_null
+      - name: claim_number
+        description: "Business claim number (C-XXXXXX format)"
+        tests:
+          - not_null
+      - name: policy_id
+        description: "Reference to the policy"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('stg_policies')
+              field: policy_id
+      - name: customer_id
+        description: "Customer identifier"
+        tests:
+          - not_null
+      - name: loss_date
+        description: "Date of loss event"
+        tests:
+          - not_null
+      - name: report_date
+        description: "Date claim was reported"
+        tests:
+          - not_null
+      - name: claim_status
+        description: "Claim status"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['OPEN', 'CLOSED', 'REJECTED']
+      - name: incurred_amount
+        description: "Total incurred amount"
+        tests:
+          - not_null
+      - name: paid_amount
+        description: "Amount paid"
+        tests:
+          - not_null
+      - name: reserve_amount
+        description: "Amount held in reserve"
+        tests:
+          - not_null

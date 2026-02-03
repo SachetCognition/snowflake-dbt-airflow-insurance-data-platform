@@ -1,6 +1,7 @@
 # Core
 pandas
 numpy
+pyyaml
 
 # Snowflake
 snowflake-connector-python

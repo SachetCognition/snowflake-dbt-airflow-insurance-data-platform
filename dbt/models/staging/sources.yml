@@ -1,0 +1,83 @@
+version: 2
+
+sources:
+  - name: raw
+    description: "Raw insurance data loaded from CSV files"
+    database: "{{ env_var('SNOWFLAKE_DATABASE', 'INSURANCE_DB') }}"
+    schema: "{{ env_var('SNOWFLAKE_SCHEMA', 'RAW') }}"
+    tables:
+      - name: raw_quotes
+        description: "Raw quotes data from synthetic data generator"
+        columns:
+          - name: quote_id
+            description: "Unique identifier for the quote"
+          - name: quote_number
+            description: "Business quote number (Q-XXXXXX format)"
+          - name: customer_id
+            description: "Customer identifier"
+          - name: quote_date
+            description: "Date the quote was created"
+          - name: product
+            description: "Insurance product type (Motor, Home, Travel)"
+          - name: channel
+            description: "Sales channel (Online, Agent, Broker)"
+          - name: risk_score
+            description: "Risk score between 0 and 1"
+          - name: premium_quoted
+            description: "Premium amount quoted"
+          - name: quote_status
+            description: "Quote status (BOUND, DECLINED, EXPIRED)"
+
+      - name: raw_policies
+        description: "Raw policies data from synthetic data generator"
+        columns:
+          - name: policy_id
+            description: "Unique identifier for the policy"
+          - name: policy_number
+            description: "Business policy number (P-XXXXXX format)"
+          - name: quote_id
+            description: "Reference to the originating quote"
+          - name: customer_id
+            description: "Customer identifier"
+          - name: product
+            description: "Insurance product type"
+          - name: inception_date
+            description: "Policy start date"
+          - name: expiry_date
+            description: "Policy end date"
+          - name: premium_written
+            description: "Premium amount written"
+          - name: payment_frequency
+            description: "Payment frequency (ANNUAL, MONTHLY)"
+          - name: policy_status
+            description: "Policy status (ACTIVE, LAPSED, CANCELLED)"
+
+      - name: raw_claims
+        description: "Raw claims data from synthetic data generator"
+        columns:
+          - name: claim_id
+            description: "Unique identifier for the claim"
+          - name: claim_number
+            description: "Business claim number (C-XXXXXX format)"
+          - name: policy_id
+            description: "Reference to the policy"
+          - name: customer_id
+            description: "Customer identifier"
+          - name: loss_date
+            description: "Date of loss event"
+          - name: report_date
+            description: "Date claim was reported"
+          - name: settlement_date
+            description: "Date claim was settled (null if not settled)"
+          - name: claim_status
+            description: "Claim status (OPEN, CLOSED, REJECTED)"
+          - name: claim_cause
+            description: "Cause of claim (Collision, Theft, Fire, Weather, Other)"
+          - name: coverage_type
+            description: "Coverage type (Third Party, Comprehensive)"
+          - name: incurred_amount
+            description: "Total incurred amount"
+          - name: paid_amount
+            description: "Amount paid"
+          - name: reserve_amount
+            description: "Amount held in reserve"
